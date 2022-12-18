@@ -19,19 +19,96 @@
             class="mt-0 mr-2"
           ></v-checkbox>
           <v-list-item-content>
-            <v-list-item-title>{{ tarefa.titulo }}</v-list-item-title>
-            <v-list-item-subtitle>{{ tarefa.id }}</v-list-item-subtitle>
+            <v-list-item-title>{{ tarefa.nome }}</v-list-item-title>
+            <v-list-item-subtitle>{{ tarefa.nota }}</v-list-item-subtitle>
           </v-list-item-content>
+          <v-list-item-action>
+            <v-btn @click="deletarTarefa(tarefa)" icon>
+              <v-icon color="primary">mdi-delete</v-icon>
+            </v-btn>
+          </v-list-item-action>
         </v-list-item>
       </v-list>
     </v-card>
+    <v-btn
+      fab
+      fixed
+      right
+      bottom
+      color="primary"
+      @click="modalNovaTarefa = true"
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
+    <v-dialog v-model="modalNovaTarefa" width="500">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn fab fixed right bottom color="primary" v-on="on" v-bind="attrs">
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2"
+          >Adicionar nova tarefa</v-card-title
+        >
+        <v-form
+          class="mx-4 mt-4 pb-4"
+          ref="form"
+          @submit.prevent="validarTarefa"
+          lazy-validation
+        >
+          <v-text-field
+            v-model="novaTarefa.nome"
+            label="Titulo"
+            required
+            outlined
+            :rules="regras"
+          ></v-text-field>
+          <v-textarea
+            label="Nota"
+            v-model="novaTarefa.nota"
+            outlined
+          ></v-textarea>
+          <div class="d-flex justify-end">
+            <v-btn plain class="mr-2" @click="cancelarTarefa">Cancelar</v-btn>
+            <v-btn color="primary" type="submit">Adicionar</v-btn>
+          </div>
+        </v-form>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
 import { useTarefaStore } from "@/store/tarefa";
 
 const store = useTarefaStore();
+const regras = [(value) => Boolean(value) || "Digite algo!"];
+
+let form = ref(null);
+let modalNovaTarefa = ref(false);
+let novaTarefa = ref({});
+
+onMounted(() => {
+  console.log(form.value);
+});
+
+function cancelarTarefa() {
+  modalNovaTarefa.value = false;
+  form.value.reset();
+}
+
+function validarTarefa() {
+  if (form.value.validate()) {
+    store.adicionarTarefa(novaTarefa.value);
+    modalNovaTarefa.value = false;
+    form.value.reset();
+  }
+}
+
+function deletarTarefa({ id }) {
+  store.apagarTarefa(id);
+}
 </script>
 
 <style scoped>

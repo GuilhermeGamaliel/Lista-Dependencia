@@ -9,7 +9,8 @@ export const useTarefaStore = defineStore("tarefa", {
     adicionarTarefa(tarefa) {
       this.id_tarefas++;
       const novaTarefa = {
-        nome: tarefa,
+        nome: tarefa.nome,
+        nota: tarefa.nota,
         estaCompleta: false,
         id: this.id_tarefas,
       };
