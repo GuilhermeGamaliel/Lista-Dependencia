@@ -22,6 +22,28 @@
             <v-list-item-title>{{ tarefa.nome }}</v-list-item-title>
             <v-list-item-subtitle>{{ tarefa.nota }}</v-list-item-subtitle>
           </v-list-item-content>
+
+          <v-list-item-content class="text-right text-uppercase">
+            <v-list-item-title class="caption">
+              <v-icon v-if="tarefa.estaCompleta" dense class="mr-1"
+                >mdi-calendar-outline</v-icon
+              >
+              <v-icon
+                v-else-if="!tarefa.estaCompleta"
+                dense
+                class="mr-1 primary--text"
+                >mdi-calendar-alert</v-icon
+              >
+              <span
+                :class="{
+                  'primary--text font-weight-bold': !tarefa.estaCompleta,
+                }"
+              >
+                {{ formatarData(tarefa.data) }}</span
+              >
+            </v-list-item-title>
+          </v-list-item-content>
+
           <v-list-item-action>
             <v-btn @click="deletarTarefa(tarefa)" icon>
               <v-icon color="primary">mdi-delete</v-icon>
@@ -92,6 +114,13 @@ let novaTarefa = ref({});
 onMounted(() => {
   console.log(form.value);
 });
+
+function formatarData(data) {
+  return new Date(`${data} GMT-0300`).toLocaleString("en-US", {
+    month: "short",
+    day: "2-digit",
+  });
+}
 
 function cancelarTarefa() {
   modalNovaTarefa.value = false;
