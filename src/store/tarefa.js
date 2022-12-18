@@ -13,7 +13,7 @@ export const useTarefaStore = defineStore("tarefa", {
         nota: tarefa.nota,
         estaCompleta: false,
         id: this.id_tarefas,
-        data: null,
+        data: new Date(),
       };
       this.tarefas.push(novaTarefa);
     },

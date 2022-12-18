@@ -97,29 +97,36 @@
         </v-form>
       </v-card>
     </v-dialog>
+    <v-snackbar class="mb-16 pb-5" v-model="snackbar.active" :timeout="2000">
+      <h3 class="h3 text-center">
+        {{ snackbar.text }}
+      </h3>
+    </v-snackbar>
   </v-app>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useTarefaStore } from "@/store/tarefa";
 
 const store = useTarefaStore();
 const regras = [(value) => Boolean(value) || "Digite algo!"];
 
 let form = ref(null);
-let modalNovaTarefa = ref(false);
+let snackbar = ref({});
 let novaTarefa = ref({});
-
-onMounted(() => {
-  console.log(form.value);
-});
+let modalNovaTarefa = ref(false);
 
 function formatarData(data) {
-  return new Date(`${data} GMT-0300`).toLocaleString("en-US", {
+  return new Date(data).toLocaleString("en-US", {
     month: "short",
     day: "2-digit",
   });
+}
+
+function ativarAviso(texto) {
+  snackbar.value.text = texto;
+  snackbar.value.active = true;
 }
 
 function cancelarTarefa() {
@@ -132,11 +139,13 @@ function validarTarefa() {
     store.adicionarTarefa(novaTarefa.value);
     modalNovaTarefa.value = false;
     form.value.reset();
+    ativarAviso("A tarefa foi adicionada");
   }
 }
 
 function deletarTarefa({ id }) {
   store.apagarTarefa(id);
+  ativarAviso("A tarefa foi apagada");
 }
 </script>
 
